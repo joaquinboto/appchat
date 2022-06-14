@@ -1,0 +1,55 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+
+.containerProductos {
+    width: 100%;
+    margin: 0 auto;
+    height: 100%;
+    background-color: black;
+    padding: 10px;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 50px;
+    height: 350px;
+}
+
+
+#content-wrap {
+    display: none;
+}
+
+.enlaceSalir {
+    text-decoration: none;
+    color: white;
+}
+
+.textoChat {
+    border-radius: 8px;
+}
+
+.divProductosCargados {
+    width: 100%;
+    margin: 0 auto;
+    height: 100%;
+    background-color: black;
+    padding: 10px;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
