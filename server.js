@@ -10,6 +10,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 const Contenedor = require('./contenedor');
 const productos = new Contenedor('data.json');
+const PORT = process.env.PORT || 3000
 
 app.get('/', (req, res) => {
   res.render('index');
@@ -26,7 +27,7 @@ app.post('/chat' , (req , res) => {
 })
 
 
-server.listen(8080, () => {
+server.listen(PORT, () => {
   console.log('Servidor corriendo en http://localhost:8080');
 });
 
