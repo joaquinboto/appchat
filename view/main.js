@@ -15,8 +15,6 @@ const renderProductos = (data) => {
   document.getElementById('productos').innerHTML = html
 }
 
-
-
 //ESCUCHANDO EL EVENTO DE NUEVO PRODUCTO
 socket.on('productos' , (data) => {
   renderProductos(data)
@@ -41,23 +39,29 @@ let nick = ''
 //CHAT
 formChat.addEventListener('submit', (e) => {
   e.preventDefault()
-  socket.emit('enviando:mensaje', msg.value)
+  let fecha = new Date().toLocaleString()
+  socket.emit('enviando:mensaje', msg.value , fecha )
   msg.value = ''
 
 })
 
-socket.on('mensaje', (data) => {
 
+//ESCUCHANDO Y PINTANDO DATA EN EL CHAT
+socket.on('mensaje', (data) => {
   let color = ''
   if (nick == data.user) {
     color = '#33ff88'
   } 
-  ventanaChat.innerHTML += `<div class="msg-area mb-2 textoChat" style="background-color: ${color}"><p class="msg"><b>${data.user}</b>: </br>${data.msg}</p></div>`
+  ventanaChat.innerHTML += `<div class="msg-area mb-2 textoChat" style="background-color: ${color}"><p class="msg"> <span style="color: red">${data.fecha}</span> <b>${data.user}</b>: </br>${data.msg}</p></div>`
 })
+
+
 
 //FORMULARIO DE INGRESO DE USUARIO
 nickForm.addEventListener('submit', (e) => {
   e.preventDefault()
+
+  
   socket.emit('enviando:nick', nickname.value , data => {
     if(data){
       nick = nickname.value
@@ -67,7 +71,6 @@ nickForm.addEventListener('submit', (e) => {
     }else{
       nickError.innerHTML = '<div class="alert alert-danger">El nombre ya existe</div>'
     }
-
     nickname.value = ''
   })
 

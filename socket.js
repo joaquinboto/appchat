@@ -4,9 +4,7 @@ const chat = new Contenedor('msj.json');
 
 
 module.exports = (io) => {
-
-    const arrayMsg = [];
-
+    const arrayUsers = [];
 
     io.on('connection', (socket) => {
 
@@ -14,35 +12,34 @@ module.exports = (io) => {
         socket.emit('productos' , productos.getAll());
 
         //App chat
-        socket.on('enviando:mensaje', (data) => {
+        socket.on('enviando:mensaje', (data , fecha) => {
           
           io.sockets.emit('mensaje', {
             msg: data,
-            user: socket.nickname
+            user: socket.nickname,
+            fecha: fecha
           });
         })
 
         socket.on('enviando:nick', (data, callback) => {
-
-          
-          if (arrayMsg.indexOf(data) !== -1) {
+          if (arrayUsers.indexOf(data) !== -1) {
             callback(false)
           } else {
             callback(true)
             socket.nickname = data;
-            arrayMsg.push(socket.nickname)
-            io.sockets.emit('usernames', arrayMsg);
+            arrayUsers.push(socket.nickname)
+            io.sockets.emit('usernames', arrayUsers);
           }
         })
 
-        socket.on('disconnect' , datos => {
+        socket.on('disconnect' , () => {
 
           if (!socket.nickname) {
             return 
           } else {
-            let idx = arrayMsg.indexOf(socket.nickname)
-            arrayMsg.splice(idx , 1)
-            io.sockets.emit('usernames', arrayMsg);
+            let idx = arrayUsers.indexOf(socket.nickname)
+            arrayUsers.splice(idx , 1)
+            io.sockets.emit('usernames', arrayUsers);
           }
            
         })
