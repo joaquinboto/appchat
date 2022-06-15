@@ -1,6 +1,8 @@
 
 const socket = io()
 
+
+
 //RENDERIZANDO PRODUCTOS
 const renderProductos = (data) => {
   const html = data.map(element=> {
@@ -40,19 +42,21 @@ let nick = ''
 formChat.addEventListener('submit', (e) => {
   e.preventDefault()
   let fecha = new Date().toLocaleString()
-  socket.emit('enviando:mensaje', msg.value , fecha )
+  let user = localStorage.getItem('user')
+  socket.emit('enviando:mensaje', msg.value , fecha , user)
   msg.value = ''
-
 })
 
 
 //ESCUCHANDO Y PINTANDO DATA EN EL CHAT
 socket.on('mensaje', (data) => {
-  let color = ''
-  if (nick == data.user) {
-    color = '#33ff88'
-  } 
-  ventanaChat.innerHTML += `<div class="msg-area mb-2 textoChat" style="background-color: ${color}"><p class="msg"> <span style="color: red">${data.fecha}</span> <b>${data.user}</b>: </br>${data.msg}</p></div>`
+  let mensajes = data.map(msj => {
+
+    return(`<div><strong>${msj.date}</strong> ${msj.user}: ${msj.mensaje}</div>`)
+
+  }).join(' ')
+
+  ventanaChat.innerHTML = mensajes
 })
 
 
@@ -60,35 +64,25 @@ socket.on('mensaje', (data) => {
 //FORMULARIO DE INGRESO DE USUARIO
 nickForm.addEventListener('submit', (e) => {
   e.preventDefault()
-
-  
-  socket.emit('enviando:nick', nickname.value , data => {
-    if(data){
-      nick = nickname.value
-      divChat.style.display = "block";
-      divForm.style.display = "none";
-      
-    }else{
-      nickError.innerHTML = '<div class="alert alert-danger">El nombre ya existe</div>'
+  if ( nickname.value == '') {
+    nickError.innerHTML = `<div class="alert alert-danger">Error! Ingrese usuario</div>`
+  } else {
+    localStorage.setItem('user' , nickname.value)
+    let user = localStorage.getItem('user')
+    let objet = {
+      name: user
     }
-    nickname.value = ''
-  })
+    divChat.style.display = "block"
+    divForm.style.display = "none"
+    socket.emit('user:name' , objet)
+  }
 
-  socket.on('usernames', (data) => {
+})
 
-    let colorUser = 'grey'
-    let salir = ''
+socket.on('all-user' , data => {
+  let usuariosConectados = data.map(user => {
+    return (`<div>${user.name}</div>`)
+  }).join('')
 
-    usarnames.innerHTML = data.map(element => {
-
-      if (element == nick) {
-        colorUser = 'green'
-        salir = '<button class="btn btn-danger btn-sm" "><a class="enlaceSalir" href="/">Salir</a></button>'
-      } else {
-        colorUser = 'grey'
-        salir = ''
-      }
-      return `<p style="color=${colorUser}">${element} ${salir}</p>`
-    }).join(' ')
-  })
+  usarnames.innerHTML = usuariosConectados
 })
